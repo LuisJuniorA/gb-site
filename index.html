@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust GB Emulator - Ultra Edition</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/gameboy.css">
+    <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/controls.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <aside class="sidebar left-panel">
+            <div class="panel-section">
+                <h3>SYSTEM DEBUG</h3>
+                <div id="debug-info"></div>
+            </div>
+
+            <div class="panel-section">
+                <h3>ROM MANAGEMENT</h3>
+                <label for="rom-upload" class="btn-upload">LOAD ROM</label>
+                <input type="file" id="rom-upload" accept=".gb,.gbc" hidden />
+                <div class="drop-zone-mini">Drop ROM here</div>
+            </div>
+
+            <div class="panel-section">
+                <h3>SAVES</h3>
+                <button class="btn-side">Export .SAV</button>
+                <button class="btn-side">Load State</button>
+            </div>
+        </aside>
+
+        <div class="gameboy-container">
+            <div class="gameboy">
+                <div class="power-dome"></div>
+                <div class="power-switch-area">
+                    <div class="power-switch-well">
+                        <div class="power-label">
+                            <span>OFF</span>
+                            <span class="indicator">◀▶</span>
+                            <span>ON</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-area">
+                    <div class="battery-indicator"></div>
+                    <div class="screen-header">
+                        <div class="line-blue"></div>
+                        <div class="text">DOT MATRIX WITH STEREO SOUND</div>
+                        <div class="line-pink"></div>
+                    </div>
+
+                    <div class="screen-display">
+                        <canvas id="gb-canvas" width="160" height="144"></canvas>
+                    </div>
+                </div>
+
+                <div class="logo">Nintendo <span>GAME BOY</span></div>
+
+                <div class="controls-row">
+                    <div class="dpad-container">
+                        <div class="dpad-well"></div>
+                        <div class="dpad">
+                            <div class="dpad-center">
+                                <div class="center-circle"></div>
+                            </div>
+
+                            <div class="dpad-button up" id="ctrl-up">
+                                <div class="arrow up"></div>
+                            </div>
+                            <div class="dpad-button down" id="ctrl-down">
+                                <div class="arrow down"></div>
+                            </div>
+                            <div class="dpad-button left" id="ctrl-left">
+                                <div class="arrow left"></div>
+                            </div>
+                            <div class="dpad-button right" id="ctrl-right">
+                                <div class="arrow right"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-container">
+                        <div class="action-well"></div>
+
+                        <div class="action-buttons">
+                            <div class="btn-wrapper">
+                                <div class="button-b" id="btn-b"></div>
+                                <span class="btn-label">B</span>
+                            </div>
+
+                            <div class="btn-wrapper">
+                                <div class="button-a" id="btn-a"></div>
+                                <span class="btn-label">A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-buttons">
+                    <div class="menu-btn-container">
+                        <div class="select" id="btn-select"></div>
+                        <span class="label">SELECT</span>
+                    </div>
+                    <div class="menu-btn-container">
+                        <div class="start" id="btn-start"></div>
+                        <span class="label">START</span>
+                    </div>
+                </div>
+
+                <div class="speaker">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+
+        <aside class="sidebar right-panel">
+            <div class="panel-section">
+                <h3>EMULATION</h3>
+                <div class="control-group">
+                    <label>Speed: <span id="speed-val">1x</span></label>
+                    <input type="range" min="1" max="4" value="1">
+                </div>
+                <button id="btn-fullscreen" class="btn-side">Fullscreen</button>
+            </div>
+
+            <div class="panel-section">
+                <h3>CONTROLS (click to change)</h3>
+                <ul class="keybind-list">
+                    <li><span>UP</span> <kbd>↑</kbd></li>
+                    <li><span>DOWN</span> <kbd>↓</kbd></li>
+                    <li><span>LEFT</span> <kbd>←</kbd></li>
+                    <li><span>RIGHT</span> <kbd>→</kbd></li>
+                    <li><span>A</span> <kbd>X</kbd></li>
+                    <li><span>B</span> <kbd>S</kbd></li>
+                    <li><span>START</span> <kbd>Enter</kbd></li>
+                    <li><span>SELECT</span> <kbd>Shift</kbd></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+/* ==========================================================================
+   SCREEN AREA
+   ========================================================================== */
+.screen-area {
+    background-color: var(--screen-grey);
+    width: 100%;
+    height: 380px;
+    border-radius: 20px 20px 70px 20px;
+    padding: 0px 55px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* ==========================================================================
+   LCD DISPLAY
+   ========================================================================== */
+.screen-display {
+    background-color: var(--screen-green);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 160 / 144;
+    box-shadow: inset 6px 6px 15px rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 4px solid #444;
+}
+
+/* ==========================================================================
+   FULLSCREEN STYLES
+   ========================================================================== */
+.screen-display:fullscreen {
+    background-color: #000 !important;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-display:fullscreen #gb-canvas {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    border: none;
+    border-radius: 0;
+}
+
+/* ==========================================================================
+   CANVAS ELEMENT
+   ========================================================================== */
+#gb-canvas {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    object-fit: fill;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+
+/* ==========================================================================
+   BATTERY INDICATOR
+   ========================================================================== */
+.battery-indicator {
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    left: 22px;
+    top: 42%;
+}
+
+.battery-indicator.on {
+    background: #ff0000;
+    box-shadow: 0 0 8px #ff0000, inset 1px 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   SCREEN HEADER & DECORATION
+   ========================================================================== */
+.screen-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.line-blue {
+    flex: 1;
+    height: 3px;
+    border-top: 2px solid var(--blue-line);
+    border-bottom: 2px solid var(--blue-line);
+}
+
+.line-pink {
+    flex: 1;
+    height: 3px;
+    border-top: 2px solid var(--pink-line);
+    border-bottom: 2px solid var(--pink-line);
+}
+
+.screen-header .text {
+    font-size: 11px;
+    color: #d1d1d1;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

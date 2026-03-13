@@ -1,0 +1,97 @@
+:root {
+    --bg-color: #dcd0b3;
+    --screen-grey: #6b6d60;
+    --screen-green: #9ca04c;
+    --magenta: #911c52;
+    --retro-blue: #2a286e;
+    --dark-grey: #222;
+    --blue-line: #302d8e;
+    --pink-line: #8e2d45;
+    --dpad-base: #222;
+    --dpad-inset: #111;
+    --dpad-striae: rgba(255, 255, 255, 0.03);
+}
+
+/* ==========================================================================
+   GLOBAL STYLES
+   ========================================================================== */
+body {
+    background-color: #0f0f0f;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 60px 0;
+}
+
+/* ==========================================================================
+   USER INTERFACE & OVERLAYS
+   ========================================================================== */
+#ui-overlay {
+    display: flex;
+    gap: 20px;
+}
+
+.btn-power {
+    padding: 10px 25px;
+    border-radius: 5px;
+    border: 2px solid #555;
+    background: #ccc;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-upload {
+    background: #333;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid #555;
+}
+
+/* ==========================================================================
+   DRAG & DROP SYSTEM
+   ========================================================================== */
+#drop-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(42, 40, 110, 0.7);
+    border: 10px dashed #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+body.drag-over #drop-zone {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.drop-message {
+    font-size: 3rem;
+    font-weight: 900;
+    color: white;
+}
+
+#wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.gameboy-container {
+    flex-shrink: 0;
+}
