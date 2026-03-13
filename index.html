@@ -124,28 +124,20 @@
                 <h3>EMULATION</h3>
                 <div class="control-group">
                     <label>Speed: <span id="speed-val">1x</span></label>
-                    <input type="range" min="1" max="4" value="1">
+                    <input id="speed-input" type="range" min="1" max="4" value="1">
                 </div>
                 <button id="btn-fullscreen" class="btn-side">Fullscreen</button>
             </div>
 
             <div class="panel-section">
                 <h3>CONTROLS (click to change)</h3>
-                <ul class="keybind-list">
-                    <li><span>UP</span> <kbd>↑</kbd></li>
-                    <li><span>DOWN</span> <kbd>↓</kbd></li>
-                    <li><span>LEFT</span> <kbd>←</kbd></li>
-                    <li><span>RIGHT</span> <kbd>→</kbd></li>
-                    <li><span>A</span> <kbd>X</kbd></li>
-                    <li><span>B</span> <kbd>S</kbd></li>
-                    <li><span>START</span> <kbd>Enter</kbd></li>
-                    <li><span>SELECT</span> <kbd>Shift</kbd></li>
+                <ul id="keybind-list" class="keybind-list">
                 </ul>
             </div>
         </aside>
     </div>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" defer></script>
 </body>
 
 </html>

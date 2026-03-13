@@ -2,6 +2,9 @@ import init, { WasmEmulator } from "./wasm/gb_wasm.js";
 import { EmulatorContext } from "./js/EmulatorContext.js";
 import { Display } from "./js/Display.js";
 import { Inputs } from "./js/Inputs.js";
+import { UIBuilder } from "./js/UIBuilder.js";
+import { bus } from "./js/EventBus.js";
+import { EVENTS } from "./js/Events.js";
 
 /**
  * Main entry point to initialize the WASM core and JS peripherals.
@@ -10,15 +13,20 @@ async function boot() {
     try {
         const wasm = await init();
 
-        new Display('gb-canvas', 'debug-info');
-        new Inputs();
+        if (document.readyState === "loading") {
+            await new Promise(r => window.addEventListener('DOMContentLoaded', r));
+        }
 
-        // Bridges WASM core with JavaScript peripherals
+        new UIBuilder('keybind-list', 'speed-val');
+        new Inputs();
+        new Display('gb-canvas', 'debug-info');
         new EmulatorContext(wasm, WasmEmulator);
 
-        console.log("🚀 EmulatorContext initialized and ready.");
+        bus.emit(EVENTS.REQUEST_KEYBINDS_SYNC);
+
+        console.log("🚀 Emulator ready.");
     } catch (err) {
-        console.error("Emulator boot error:", err);
+        console.error("Boot error:", err);
     }
 }
 

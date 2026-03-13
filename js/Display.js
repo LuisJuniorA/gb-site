@@ -1,8 +1,9 @@
 import { bus } from './EventBus.js';
+import { EVENTS } from './Events.js';
 
 /**
- * Manages the emulator's visual output, including canvas rendering,
- * debug overlays, and power-state transitions.
+ * Manages the emulator's visual output, focusing strictly on canvas rendering,
+ * power states, and performance debug information.
  */
 export class Display {
     /**
@@ -15,113 +16,38 @@ export class Display {
         this.debugArea = document.getElementById(debugId);
         this.batteryLed = document.querySelector('.battery-indicator');
 
-        /** * Maps internal IDs to user-friendly labels in the UI.
-         * @type {Object<string, string>} 
-         */
-        this.labelMap = {
-            "ctrl-up": "UP", "ctrl-down": "DOWN", "ctrl-left": "LEFT", "ctrl-right": "RIGHT",
-            "btn-a": "A", "btn-b": "B", "btn-select": "SELECT", "btn-start": "START"
-        };
-
         this.initCanvas();
         this.initEventListeners();
-        this.initClickListeners();
     }
 
     /**
-     * Initializes click listeners on KBD elements to allow key remapping.
-     * @private
-     */
-    initClickListeners() {
-        const kbdElements = document.querySelectorAll('.keybind-list kbd');
-        kbdElements.forEach(kbd => {
-            kbd.style.cursor = 'pointer';
-            kbd.addEventListener('click', () => {
-                const label = kbd.parentElement.querySelector('span').textContent.trim();
-                const btnId = Object.keys(this.labelMap).find(key => this.labelMap[key] === label);
-
-                kbd.textContent = "...";
-                kbd.classList.add('waiting');
-
-                const handleNextKey = (event) => {
-                    event.preventDefault();
-                    bus.emit('REQUEST_KEYBIND_CHANGE', { newKey: event.key, btnId: btnId });
-                    kbd.classList.remove('waiting');
-                    window.removeEventListener('keydown', handleNextKey);
-                };
-                window.addEventListener('keydown', handleNextKey);
-            });
-        });
-    }
-
-    /**
-     * Dynamically updates the <kbd> tags in the sidebar based on the provided idMap.
-     * @param {Object} idMap - Mapping of KeyboardEvent keys to emulator button IDs.
-     */
-    updateKeybindUI(idMap) {
-        const listItems = document.querySelectorAll('.keybind-list li');
-        const arrowSymbols = { "ArrowUp": "↑", "ArrowDown": "↓", "ArrowLeft": "←", "ArrowRight": "→" };
-
-        listItems.forEach(li => {
-            const labelSpan = li.querySelector('span');
-            const kbdTag = li.querySelector('kbd');
-            if (!labelSpan || !kbdTag) return;
-
-            const buttonLabel = labelSpan.textContent.trim();
-            const entry = Object.entries(idMap).find(([_, btnId]) => this.labelMap[btnId] === buttonLabel);
-
-            if (entry) {
-                let displayKey = entry[0];
-                kbdTag.textContent = arrowSymbols[displayKey] || (displayKey === " " ? "Space" : displayKey);
-                kbdTag.style.opacity = "1";
-            } else {
-                kbdTag.textContent = "?";
-                kbdTag.style.opacity = "0.5";
-            }
-        });
-    }
-
-    /**
-     * Subscribes to global bus events.
+     * Subscribes to core emulation events via the EventBus.
      * @private
      */
     initEventListeners() {
-        bus.on('FRAME_READY', ({ ptr, buffer }) => this.draw(ptr, buffer));
-        bus.on('DEBUG_UPDATE', (data) => this.updateDebug(data));
-        bus.on('EMULATOR_STARTED', () => this.powerOn());
-        bus.on('EMULATOR_STOPPED', () => this.powerOff());
-        bus.on('KEYBINDS_UPDATED', (idMap) => this.updateKeybindUI(idMap));
+        bus.on(EVENTS.FRAME_READY, ({ ptr, buffer }) => this.draw(ptr, buffer));
+        bus.on(EVENTS.DEBUG_UPDATE, (data) => this.updateDebug(data));
+        bus.on(EVENTS.EMULATOR_STARTED, () => this.setPowerState(true));
+        bus.on(EVENTS.EMULATOR_STOPPED, () => this.setPowerState(false));
     }
 
     /**
-     * Triggers the "Power On" visual state.
+     * Updates the visual state of the display and hardware indicators.
+     * @param {boolean} isOn - Whether the emulator is powered on.
      */
-    powerOn() {
-        this.canvas.style.opacity = "1";
-        this.batteryLed?.classList.add('on');
+    setPowerState(isOn) {
+        this.canvas.style.opacity = isOn ? "1" : "0";
+        this.batteryLed?.classList.toggle('on', isOn);
+
+        if (!isOn) {
+            setTimeout(() => this.clearScreen(), 800);
+        }
     }
 
     /**
-     * Triggers the "Power Off" visual state.
-     */
-    powerOff() {
-        this.canvas.style.opacity = "0";
-        this.batteryLed?.classList.remove('on');
-        setTimeout(() => this.clearScreen(), 800);
-    }
-
-    /**
-     * Resets the canvas by filling it with a default color.
-     */
-    clearScreen() {
-        this.ctx.fillStyle = '#080808';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-    /**
-     * Renders a raw RGBA pixel buffer to the canvas.
-     * @param {number} ptr - Memory pointer.
-     * @param {ArrayBuffer} buffer - WASM memory buffer.
+     * Renders a raw RGBA pixel buffer from WASM memory to the canvas.
+     * @param {number} ptr - Memory pointer to the start of the frame buffer.
+     * @param {ArrayBuffer} buffer - The shared WASM linear memory buffer.
      */
     draw(ptr, buffer) {
         const frameData = new Uint8ClampedArray(buffer, ptr, 160 * 144 * 4);
@@ -129,7 +55,7 @@ export class Display {
     }
 
     /**
-     * Sets internal canvas dimensions.
+     * Initializes canvas dimensions and initial background state.
      * @private
      */
     initCanvas() {
@@ -139,12 +65,21 @@ export class Display {
     }
 
     /**
-     * Updates the debug overlay with CPU/PPU info.
-     * @param {Object} data - Register data.
+     * Fills the screen with a neutral dark color.
+     */
+    clearScreen() {
+        this.ctx.fillStyle = '#080808';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    /**
+     * Updates the debug overlay with internal CPU and PPU status.
+     * @param {Object} data - Object containing pc (Program Counter) and ly (Current Scanline).
      */
     updateDebug({ pc, ly }) {
         if (this.debugArea) {
-            this.debugArea.textContent = `PC: 0x${pc.toString(16).toUpperCase().padStart(4, '0')} | LY: ${ly}`;
+            const hexPC = pc.toString(16).toUpperCase().padStart(4, '0');
+            this.debugArea.textContent = `PC: 0x${hexPC} | LY: ${ly}`;
         }
     }
 }
