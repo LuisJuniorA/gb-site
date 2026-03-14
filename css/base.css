@@ -95,3 +95,49 @@ body.drag-over #drop-zone {
 .gameboy-container {
     flex-shrink: 0;
 }
+
+/* ==========================================================================
+   FOOTER INFO
+   ========================================================================== */
+.footer-info {
+    width: 100%;
+    max-width: 1180px;
+    /* Aligné sur la largeur totale (Gameboy + Sidebars + Gaps) */
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 2px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.footer-info p {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--screen-grey);
+    /* On réutilise ta variable grise */
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0;
+    opacity: 0.7;
+    position: relative;
+    display: inline-block;
+}
+
+/* Petit effet de point rouge "Recording" ou "Status" à côté du texte */
+.footer-info p::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--magenta);
+    border-radius: 50%;
+    margin-right: 15px;
+    box-shadow: 0 0 5px var(--magenta);
+    vertical-align: middle;
+}
+
+/* Optionnel : un petit effet au survol */
+.footer-info p:hover {
+    color: var(--screen-green);
+    opacity: 1;
+    transition: all 0.3s ease;
+}
