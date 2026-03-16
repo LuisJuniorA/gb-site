@@ -88,8 +88,9 @@ export class EmulatorContext {
             if (!store.getState().isPowered) return;
 
             if (this.instance) {
-                this.instance.clock_frame();
-
+		for (let i = 0; i < store.getState().speed; i++){
+                	this.instance.clock_frame();
+		}
                 // Dispatch frame data for the Display component
                 bus.emit(EVENTS.FRAME_READY, {
                     ptr: this.instance.get_frame_buffer_ptr(),

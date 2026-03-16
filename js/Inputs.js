@@ -206,7 +206,7 @@ export class Inputs {
         if (!input) return;
 
         input.addEventListener('input', e => {
-            const newSpeed = parseFloat(e.target.value);
+            const newSpeed = 1 << parseFloat(e.target.value);
             store.setState('speed', newSpeed);
             bus.emit(EVENTS.SPEED_CHANGE, newSpeed);
         });
