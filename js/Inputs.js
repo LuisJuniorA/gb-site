@@ -33,6 +33,7 @@ export class Inputs {
         this.initPhysicalButtons();
         this.initDragAndDrop();
         this.initFileInput();
+        this.initSaveInput();
         this.initSpeedInput();
 
         this.initBusListeners();
@@ -195,6 +196,32 @@ export class Inputs {
             const file = e.target.files[0];
             if (file) bus.emit(EVENTS.ROM_LOADED, await file.arrayBuffer());
         });
+    }
+
+    /**
+     * Save/Load functionality for state/save files.
+     * @private
+     */
+    initSaveInput() {
+        const btnExport = document.getElementById('btn-export-sav');
+        if (btnExport) {
+            btnExport.addEventListener('click', () => {
+                bus.emit(EVENTS.EXPORT_SAVE);
+            });
+        }
+
+        const btnLoad = document.getElementById('btn-load-state');
+        const inputLoad = document.getElementById('sav-upload');
+        if (btnLoad && inputLoad) {
+            btnLoad.addEventListener('click', () => {
+                inputLoad.click();
+            });
+            inputLoad.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) bus.emit(EVENTS.SAVE_LOADED, await file.arrayBuffer());
+                e.target.value = ''; // Reset input to allow reloading the same file
+            });
+        }
     }
 
     /**

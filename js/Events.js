@@ -5,6 +5,8 @@ export const EVENTS = Object.freeze({
     // Emulation Core
     FRAME_READY: 'core:frame_ready',
     ROM_LOADED: 'core:rom_loaded',
+    SAVE_LOADED: 'core:save_loaded',
+    EXPORT_SAVE: 'core:export_save',
     DEBUG_UPDATE: 'core:debug_update',
 
     // Lifecycle

@@ -20,6 +20,8 @@ export class EmulatorContext {
         this.instance = null;
         /** @type {number|null} */
         this.animationId = null;
+        /** @type {ArrayBuffer|null} */
+        this.currentRomBuffer = null;
 
         this.initEventListeners();
     }
@@ -34,6 +36,8 @@ export class EmulatorContext {
         });
 
         bus.on(EVENTS.ROM_LOADED, (buffer) => this.insertCartridge(buffer));
+        bus.on(EVENTS.SAVE_LOADED, (buffer) => this.loadSave(buffer));
+        bus.on(EVENTS.EXPORT_SAVE, () => this.exportSave());
         bus.on(EVENTS.GB_KEY_DOWN, (key) => this.instance?.key_down(key));
         bus.on(EVENTS.GB_KEY_UP, (key) => this.instance?.key_up(key));
     }
@@ -65,16 +69,54 @@ export class EmulatorContext {
     /**
      * Loads a ROM buffer into a new emulator instance and powers it on.
      * @param {ArrayBuffer} romBuffer 
+     * @param {ArrayBuffer|null} [saveDataBuffer=null]
      */
-    insertCartridge(romBuffer) {
+    insertCartridge(romBuffer, saveDataBuffer = null) {
+        this.currentRomBuffer = romBuffer;
+
         // Force power off before swapping instance
         store.setState('isPowered', false);
 
         // Instantiate new core with ROM data
-        this.instance = new this.WasmEmulatorClass(new Uint8Array(romBuffer));
+        const romArray = new Uint8Array(romBuffer);
+        const saveArray = saveDataBuffer ? new Uint8Array(saveDataBuffer) : null;
+        this.instance = new this.WasmEmulatorClass(romArray, saveArray);
 
         // Power back on via Store
         store.setState('isPowered', true);
+    }
+
+    /**
+     * Loads save data into the current ROM.
+     * @param {ArrayBuffer} saveDataBuffer 
+     */
+    loadSave(saveDataBuffer) {
+        if (!this.currentRomBuffer) {
+            console.warn("Cannot load save data without a loaded ROM.");
+            return;
+        }
+        this.insertCartridge(this.currentRomBuffer, saveDataBuffer);
+    }
+
+    /**
+     * Exports the current save data as a .sav file download.
+     */
+    exportSave() {
+        if (!this.instance) return;
+        const saveData = this.instance.get_save_data();
+        if (saveData && saveData.length > 0) {
+            const blob = new Blob([saveData], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'save.sav';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } else {
+            console.warn("No save data available to export.");
+        }
     }
 
     /**

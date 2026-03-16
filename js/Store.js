@@ -9,7 +9,7 @@ class Store {
     constructor() {
         this.state = {
             isPowered: false,
-            speed: 0,
+            speed: 1,
             romName: null,
             isMuted: false
         };
