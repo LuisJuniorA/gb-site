@@ -130,9 +130,14 @@ export class EmulatorContext {
             if (!store.getState().isPowered) return;
 
             if (this.instance) {
-		for (let i = 0; i < store.getState().speed; i++){
-                	this.instance.clock_frame();
-		}
+                for (let i = 0; i < store.getState().speed; i++) {
+                    this.instance.clock_frame();
+
+                    const audioData = this.instance.get_audio_buffer();
+                    if (audioData.length > 0) {
+                        bus.emit(EVENTS.AUDIO_READY, audioData);
+                    }
+                }
                 // Dispatch frame data for the Display component
                 bus.emit(EVENTS.FRAME_READY, {
                     ptr: this.instance.get_frame_buffer_ptr(),

@@ -8,6 +8,7 @@ export const EVENTS = Object.freeze({
     SAVE_LOADED: 'core:save_loaded',
     EXPORT_SAVE: 'core:export_save',
     DEBUG_UPDATE: 'core:debug_update',
+    AUDIO_READY: 'core:audio_ready',
 
     // Lifecycle
     EMULATOR_STARTED: 'lifecycle:started',

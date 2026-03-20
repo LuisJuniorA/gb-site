@@ -3,6 +3,7 @@ import { EmulatorContext } from "./js/EmulatorContext.js";
 import { Display } from "./js/Display.js";
 import { Inputs } from "./js/Inputs.js";
 import { UIBuilder } from "./js/UIBuilder.js";
+import { AudioPlayer } from "./js/AudioPlayer.js";
 import { bus } from "./js/EventBus.js";
 import { EVENTS } from "./js/Events.js";
 
@@ -20,6 +21,7 @@ async function boot() {
         new UIBuilder('keybind-list', 'speed-val');
         new Inputs();
         new Display('gb-canvas', 'debug-info');
+        new AudioPlayer();
         new EmulatorContext(wasm, WasmEmulator);
 
         bus.emit(EVENTS.REQUEST_KEYBINDS_SYNC);
