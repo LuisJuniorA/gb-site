@@ -18,7 +18,7 @@ async function boot() {
             await new Promise(r => window.addEventListener('DOMContentLoaded', r));
         }
 
-        new UIBuilder('keybind-list', 'speed-val');
+        new UIBuilder('keybind-list', 'speed-val', 'volume-val');
         new Inputs();
         new Display('gb-canvas', 'debug-info');
         new AudioPlayer();

@@ -23,6 +23,7 @@ export const EVENTS = Object.freeze({
     REQUEST_KEYBINDS_SYNC: 'ui:req_keybind_sync',
     KEYBINDS_UPDATED: 'ui:keybinds_updated',
     SPEED_CHANGE: 'ui:speed_change',
+    VOLUME_CHANGE: 'ui:volume_change',
 
     // Store State (Dynamic keys are handled via a helper)
     STATE_UPDATED: 'store:updated'

@@ -11,7 +11,8 @@ class Store {
             isPowered: false,
             speed: 1,
             romName: null,
-            isMuted: false
+            isMuted: false,
+            volume: 1
         };
     }
 

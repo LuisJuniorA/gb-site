@@ -35,6 +35,7 @@ export class Inputs {
     this.initFileInput();
     this.initSaveInput();
     this.initSpeedInput();
+    this.initVolumeInput();
 
     this.initBusListeners();
   }
@@ -230,7 +231,7 @@ export class Inputs {
       });
     }
 
-    const btnLoad = document.getElementById("btn-load-state");
+    const btnLoad = document.getElementById("btn-load-save");
     const inputLoad = document.getElementById("sav-upload");
     if (btnLoad && inputLoad) {
       btnLoad.addEventListener("click", () => {
@@ -256,6 +257,21 @@ export class Inputs {
       const newSpeed = 1 << parseFloat(e.target.value);
       store.setState("speed", newSpeed);
       bus.emit(EVENTS.SPEED_CHANGE, newSpeed);
+    });
+  }
+
+  /**
+   * Producer: Updates the Store volume when the slider moves.
+   * @private
+   */
+  initVolumeInput() {
+    const input = document.getElementById("volume-input");
+    if (!input) return;
+
+    input.addEventListener("input", (e) => {
+      const volume = Math.max(0, Math.min(1, parseFloat(e.target.value) / 100));
+      store.setState("volume", volume);
+      bus.emit(EVENTS.VOLUME_CHANGE, volume);
     });
   }
 }

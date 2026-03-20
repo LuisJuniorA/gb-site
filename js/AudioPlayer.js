@@ -7,6 +7,9 @@ export class AudioPlayer {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     this.ctx = new AudioContext({ sampleRate: 44100 });
     this.nextStartTime = this.ctx.currentTime;
+    this.gainNode = this.ctx.createGain();
+    this.gainNode.gain.value = store.getState().volume ?? 1;
+    this.gainNode.connect(this.ctx.destination);
 
     this.initEventListeners();
   }
@@ -21,6 +24,19 @@ export class AudioPlayer {
         this.ctx.resume();
       }
     });
+
+    bus.on(getStoreEvent("volume"), (volume) => {
+      this.setVolume(volume);
+    });
+  }
+
+  setVolume(volume) {
+    const safeVolume = Math.max(0, Math.min(1, volume));
+    this.gainNode.gain.setTargetAtTime(
+      safeVolume,
+      this.ctx.currentTime,
+      0.01,
+    );
   }
 
   queueAudio(interleavedData) {
@@ -47,7 +63,7 @@ export class AudioPlayer {
 
     source.playbackRate.value = state.speed;
 
-    source.connect(this.ctx.destination);
+    source.connect(this.gainNode);
 
     if (this.nextStartTime < this.ctx.currentTime) {
       this.nextStartTime = this.ctx.currentTime + 0.02;

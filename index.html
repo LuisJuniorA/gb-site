@@ -29,7 +29,7 @@
         <div class="panel-section">
           <h3>SAVES</h3>
           <button id="btn-export-sav" class="btn-side">Export .SAV</button>
-          <button id="btn-load-state" class="btn-side">Load State</button>
+          <button id="btn-load-save" class="btn-side">Load Save</button>
           <input type="file" id="sav-upload" accept=".sav" hidden />
         </div>
       </aside>
@@ -126,7 +126,21 @@
             <label>Speed: <span id="speed-val">1x</span></label>
             <input id="speed-input" type="range" min="0" max="5" value="0" />
           </div>
-          <button id="btn-fullscreen" class="btn-side">Fullscreen</button>
+          <div class="control-row">
+            <div class="control-group volume-group">
+              <label>Volume: <span id="volume-val">100%</span></label>
+              <input
+                id="volume-input"
+                type="range"
+                min="0"
+                max="100"
+                value="100"
+              />
+            </div>
+            <button id="btn-fullscreen" class="btn-side btn-inline">
+              Fullscreen
+            </button>
+          </div>
         </div>
 
         <div class="panel-section">

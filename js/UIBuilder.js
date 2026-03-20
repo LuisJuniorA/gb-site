@@ -10,12 +10,17 @@ export class UIBuilder {
   /**
    * @param {string} listContainerId - The DOM ID for the <ul> container of keybinds.
    * @param {string} speedLabelId - The DOM ID for the span/div displaying current speed.
+   * @param {string} [volumeLabelId] - The DOM ID for the span/div displaying current volume.
    */
-  constructor(listContainerId, speedLabelId) {
+  constructor(listContainerId, speedLabelId, volumeLabelId) {
     /** @type {HTMLElement|null} */
     this.container = document.getElementById(listContainerId);
     /** @type {HTMLElement|null} */
     this.speedLabel = document.getElementById(speedLabelId);
+    /** @type {HTMLElement|null} */
+    this.volumeLabel = volumeLabelId
+      ? document.getElementById(volumeLabelId)
+      : null;
 
     this.initEventListeners();
     this.initClickListeners();
@@ -29,6 +34,7 @@ export class UIBuilder {
   initEventListeners() {
     // Updates the speed multiplier display (e.g., "2x")
     bus.on(EVENTS.SPEED_CHANGE, (speed) => this.updateSpeedLabel(speed));
+    bus.on(EVENTS.VOLUME_CHANGE, (volume) => this.updateVolumeLabel(volume));
 
     // Syncs the entire keybinding list when the mapping changes
     bus.on(EVENTS.KEYBINDS_UPDATED, (idMap) => {
@@ -106,6 +112,16 @@ export class UIBuilder {
   }
 
   /**
+   * Updates the text content of the volume indicator.
+   * @param {number} volume - The numerical volume (0..1).
+   */
+  updateVolumeLabel(volume) {
+    if (this.volumeLabel) {
+      this.volumeLabel.textContent = `${Math.round(volume * 100)}%`;
+    }
+  }
+
+  /**
    * Converts raw KeyboardEvent.key strings into user-friendly symbols or names.
    * @param {string} key - The raw key string from the event.
    * @returns {string} The formatted string or symbol.
@@ -154,4 +170,3 @@ export class UIBuilder {
     });
   }
 }
-
