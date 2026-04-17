@@ -2,291 +2,297 @@
    CONTROLS LAYOUT
    ========================================================================== */
 .controls-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 40px;
 }
 
 /* ==========================================================================
    DPAD CONTAINER & WELL
    ========================================================================== */
 .dpad-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    display: grid;
-    place-items: center;
-    margin-top: -25px;
-    margin-left: -25px;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: grid;
+  place-items: center;
+  margin-top: -25px;
+  margin-left: -25px;
 }
 
 .dpad-well {
-    position: absolute;
-    width: 185px;
-    height: 185px;
-    background-color: var(--bg-color);
-    filter: brightness(0.9);
-    border-radius: 50%;
-    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.15), inset -2px -2px 5px rgba(255, 255, 255, 0.4);
+  position: absolute;
+  width: 185px;
+  height: 185px;
+  background-color: var(--bg-color);
+  filter: brightness(0.9);
+  border-radius: 50%;
+  box-shadow:
+    inset 5px 5px 10px rgba(0, 0, 0, 0.15),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.4);
 }
 
 /* ==========================================================================
    DPAD CORE STRUCTURE
    ========================================================================== */
 .dpad {
-    position: relative;
-    width: 150px;
-    height: 150px;
+  position: relative;
+  width: 150px;
+  height: 150px;
+  filter: drop-shadow(6px 8px 0px rgba(0, 0, 0, 0.3));
 }
 
 .dpad-center {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    top: 50px;
-    left: 50px;
-    background: var(--dpad-base);
-    z-index: 5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 50px;
+  left: 50px;
+  background: var(--dpad-base);
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .center-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--dpad-base);
-    box-shadow: inset 2px 4px 10px rgba(0, 0, 0, 0.6);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dpad-base);
+  box-shadow: inset 2px 4px 10px rgba(0, 0, 0, 0.6);
 }
 
 /* ==========================================================================
    DPAD BUTTON DIRECTIONS
    ========================================================================== */
 .dpad-button {
-    position: absolute;
-    background: var(--dpad-base);
-    cursor: pointer;
-    z-index: 4;
-    transition: all 0.05s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  background: var(--dpad-base);
+  cursor: pointer;
+  z-index: 4;
+  transition: all 0.05s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dpad-button.up {
-    width: 50px;
-    height: 55px;
-    top: 0;
-    left: 50px;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 6px 0px 0px rgba(0, 0, 0, 0.3);
+  width: 50px;
+  height: 55px;
+  top: 0;
+  left: 50px;
+  border-radius: 8px 8px 0 0;
 }
 
 .dpad-button.down {
-    width: 50px;
-    height: 55px;
-    bottom: 0;
-    left: 50px;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 6px 8px 0px rgba(0, 0, 0, 0.3);
+  width: 50px;
+  height: 55px;
+  bottom: 0;
+  left: 50px;
+  border-radius: 0 0 8px 8px;
 }
 
 .dpad-button.left {
-    width: 55px;
-    height: 50px;
-    top: 50px;
-    left: 0;
-    border-radius: 8px 0 0 8px;
-    box-shadow: 0px 8px 0px rgba(0, 0, 0, 0.3);
+  width: 55px;
+  height: 50px;
+  top: 50px;
+  left: 0;
+  border-radius: 8px 0 0 8px;
 }
 
 .dpad-button.right {
-    width: 55px;
-    height: 50px;
-    top: 50px;
-    right: 0;
-    border-radius: 0 8px 8px 0;
-    box-shadow: 6px 8px 0px rgba(0, 0, 0, 0.3);
+  width: 55px;
+  height: 50px;
+  top: 50px;
+  right: 0;
+  border-radius: 0 8px 8px 0;
 }
 
 /* ==========================================================================
    DPAD INTERACTION STATES
    ========================================================================== */
 .dpad-button.pressed {
-    filter: brightness(0.8);
+  filter: brightness(0.8);
 }
 
 .dpad-button.up.pressed {
-    transform: translateY(2px);
-    box-shadow: 6px 0px 0px rgba(0, 0, 0, 0.2);
+  transform: translateY(2px);
 }
 
 .dpad-button.down.pressed {
-    transform: translateY(2px);
-    box-shadow: 6px 4px 0px rgba(0, 0, 0, 0.3);
+  transform: translateY(2px);
 }
 
 .dpad-button.left.pressed {
-    transform: translateX(2px);
-    box-shadow: 0px 6px 0px rgba(0, 0, 0, 0.3);
+  transform: translateX(2px);
 }
 
 .dpad-button.right.pressed {
-    transform: translateX(2px);
-    box-shadow: 4px 8px 0px rgba(0, 0, 0, 0.3);
+  transform: translateX(2px);
 }
 
 /* ==========================================================================
    DPAD VISUAL ARROWS
    ========================================================================== */
 .arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-    opacity: 0.2;
-    border: 8px solid transparent;
-    pointer-events: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0.2;
+  border: 8px solid transparent;
+  pointer-events: none;
 }
 
 .arrow.up {
-    border-bottom-color: #fff;
-    top: 10px;
+  border-bottom-color: #fff;
+  top: 10px;
 }
 
 .arrow.down {
-    border-top-color: #fff;
-    bottom: 10px;
+  border-top-color: #fff;
+  bottom: 10px;
 }
 
 .arrow.left {
-    border-right-color: #fff;
-    left: 10px;
+  border-right-color: #fff;
+  left: 10px;
 }
 
 .arrow.right {
-    border-left-color: #fff;
-    right: 10px;
+  border-left-color: #fff;
+  right: 10px;
 }
 
 /* ==========================================================================
    ACTION BUTTONS CONTAINER & WELL
    ========================================================================== */
 .action-container {
-    position: relative;
-    padding: 12px 20px;
-    margin-top: 10px;
+  position: relative;
+  padding: 12px 20px;
+  margin-top: 10px;
 }
 
 .action-well {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-25deg);
-    width: 210px;
-    height: 110px;
-    background-color: var(--bg-color);
-    filter: brightness(0.9);
-    border-radius: 60px;
-    box-shadow:
-        inset 4px 4px 10px rgba(0, 0, 0, 0.15),
-        inset -2px -2px 5px rgba(255, 255, 255, 0.4);
-    z-index: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  width: 210px;
+  height: 110px;
+  background-color: var(--bg-color);
+  filter: brightness(0.9);
+  border-radius: 60px;
+  box-shadow:
+    inset 4px 4px 10px rgba(0, 0, 0, 0.15),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.4);
+  z-index: 0;
 }
 
 /* ==========================================================================
    A & B BUTTON STYLES
    ========================================================================== */
 .action-buttons {
-    position: relative;
-    z-index: 1;
-    transform: rotate(-25deg);
-    display: flex;
-    gap: 35px;
+  position: relative;
+  z-index: 1;
+  transform: rotate(-25deg);
+  display: flex;
+  gap: 35px;
 }
 
 .btn-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .button-a,
 .button-b {
-    width: 70px;
-    height: 70px;
-    background: var(--magenta);
-    border-radius: 50%;
-    background-image: repeating-radial-gradient(circle at center,
-            var(--magenta),
-            var(--magenta) 2px,
-            #7c0136 3px);
-    box-shadow: 4px 8px 0 #5c1234, inset -2px -2px 5px rgba(0, 0, 0, 0.3);
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
-    z-index: 2;
+  width: 70px;
+  height: 70px;
+  background: var(--magenta);
+  border-radius: 50%;
+  background-image: repeating-radial-gradient(
+    circle at center,
+    var(--magenta),
+    var(--magenta) 2px,
+    #7c0136 3px
+  );
+  box-shadow:
+    4px 8px 0 #5c1234,
+    inset -2px -2px 5px rgba(0, 0, 0, 0.3);
+  position: relative;
+  cursor: pointer;
+  transition:
+    transform 0.05s,
+    box-shadow 0.05s;
+  z-index: 2;
 }
 
 .button-a.pressed,
 .button-b.pressed {
-    transform: translate(2px, 4px);
-    box-shadow: 1px 2px 0 #5c1234;
+  transform: translate(2px, 4px);
+  box-shadow: 1px 2px 0 #5c1234;
 }
 
 .btn-label {
-    position: absolute;
-    bottom: -45px;
-    right: 15px;
-    color: var(--retro-blue);
-    font-weight: bold;
-    transform: rotate(25deg);
-    font-size: 20px;
-    pointer-events: none;
+  position: absolute;
+  bottom: -45px;
+  right: 15px;
+  color: var(--retro-blue);
+  font-weight: bold;
+  transform: rotate(25deg);
+  font-size: 20px;
+  pointer-events: none;
 }
 
 /* ==========================================================================
    SELECT & START BUTTONS
    ========================================================================== */
 .menu-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-    margin-right: 20px;
-    gap: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-right: 20px;
+  gap: 20px;
 }
 
 .menu-btn-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: rotate(-25deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: rotate(-25deg);
 }
 
 .select,
 .start {
-    width: 80px;
-    height: 20px;
-    background: #8b8b8b;
-    border-radius: 20px;
-    box-shadow: 3px 5px 0 rgba(0, 0, 0, 0.2), inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-    cursor: pointer;
-    transition: transform 0.05s, box-shadow 0.05s;
+  width: 80px;
+  height: 20px;
+  background: #8b8b8b;
+  border-radius: 20px;
+  box-shadow:
+    3px 5px 0 rgba(0, 0, 0, 0.2),
+    inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition:
+    transform 0.05s,
+    box-shadow 0.05s;
 }
 
 .select.pressed,
 .start.pressed {
-    transform: translate(2px, 3px);
-    box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
+  transform: translate(2px, 3px);
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .label {
-    margin-top: 15px;
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--retro-blue);
-    letter-spacing: 1px;
-    pointer-events: none;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--retro-blue);
+  letter-spacing: 1px;
+  pointer-events: none;
 }
+
