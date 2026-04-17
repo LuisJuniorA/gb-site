@@ -3,23 +3,16 @@ import { CONTROLS_CONFIG } from "./config.js";
 import { store } from "./Store.js";
 import { EVENTS, getStoreEvent } from "./Events.js";
 
-/**
- * Handles keyboard, mouse, touch, and file input events.
- * Maps physical interactions to emulator actions and updates the central Store.
- */
 export class Inputs {
   constructor() {
-    /** * Immutable emulator key indices (e.g., "btn-a" -> 4).
-     * @type {Object<string, number>}
-     */
     this.keyValues = {};
-
-    /** * Dynamic mapping: KeyboardEvent.key -> Button ID (e.g., "s" -> "btn-a").
-     * @type {Object<string, string>}
-     */
     this.idMap = {};
 
-    // Initialize mappings from config
+    // Cache for the modal flow
+    this.pendingRomBuffer = null;
+    this.pendingRomName = "";
+    this.baseDocumentTitle = document.title;
+
     CONTROLS_CONFIG.forEach((ctrl, index) => {
       this.keyValues[ctrl.id] = index;
       if (ctrl.defaultKey) {
@@ -36,14 +29,11 @@ export class Inputs {
     this.initSaveInput();
     this.initSpeedInput();
     this.initVolumeInput();
+    this.initModal();
 
     this.initBusListeners();
   }
 
-  /**
-   * Set up listeners for external requests (UI interactions).
-   * @private
-   */
   initBusListeners() {
     bus.on(EVENTS.REQUEST_KEYBIND_CHANGE, ({ newKey, btnId }) =>
       this.rebindKey(btnId, newKey),
@@ -53,30 +43,18 @@ export class Inputs {
     });
   }
 
-  /**
-   * Updates the keyboard mapping and notifies the UI.
-   * @param {string} btnId - The internal button ID (e.g., "btn-a").
-   * @param {string} newKey - The new KeyboardEvent.key.
-   */
   rebindKey(btnId, newKey) {
-    // Remove duplicates: ensure one key per action and one action per key
     for (let key in this.idMap) {
       if (key === newKey || this.idMap[key] === btnId) {
         delete this.idMap[key];
       }
     }
-
     this.idMap[newKey] = btnId;
     bus.emit(EVENTS.KEYBINDS_UPDATED, this.idMap);
   }
 
-  /**
-   * Keyboard listeners. System shortcuts (F) vs GameBoy inputs.
-   * @private
-   */
   initKeyboard() {
     window.addEventListener("keydown", (e) => {
-      // System Shortcut: Fullscreen
       if (e.key.toLowerCase() === "f") return this.toggleFullscreen();
 
       const btnId = this.idMap[e.key];
@@ -96,11 +74,6 @@ export class Inputs {
     });
   }
 
-  /**
-   * Updates the Store's power state on click.
-   * Reacts to power state changes to update hardware UI indicators.
-   * @private
-   */
   initPowerButton() {
     const powerSwitch = document.querySelector(".power-switch-area");
     const dome = document.querySelector(".power-dome");
@@ -108,23 +81,17 @@ export class Inputs {
 
     if (!powerSwitch) return;
 
-    // Producer: Update the Store
     powerSwitch.addEventListener("click", () => {
       const isCurrentlyOn = store.getState().isPowered;
       store.setState("isPowered", !isCurrentlyOn);
     });
 
-    // Consumer: React to the Store's truth
     bus.on(getStoreEvent("isPowered"), (isOn) => {
       dome?.classList.toggle("on", isOn);
       batteryIndicator?.classList.toggle("on", isOn);
     });
   }
 
-  /**
-   * Standard Fullscreen API implementation.
-   * @private
-   */
   initFullscreen() {
     const btn = document.getElementById("btn-fullscreen");
     if (btn) btn.addEventListener("click", () => this.toggleFullscreen());
@@ -139,11 +106,6 @@ export class Inputs {
     }
   }
 
-  /**
-   * Maps on-screen GameBoy buttons to emulator inputs.
-   * Supports both Mouse and Touch events.
-   * @private
-   */
   initPhysicalButtons() {
     Object.keys(this.keyValues).forEach((id) => {
       const el = document.getElementById(id);
@@ -167,10 +129,33 @@ export class Inputs {
     });
   }
 
-  /**
-   * ROM Drag & Drop functionality.
-   * @private
-   */
+  async processRomFile(file) {
+    if (!file) return;
+    this.pendingRomName = file.name;
+    this.pendingRomBuffer = await file.arrayBuffer();
+
+    const pref = localStorage.getItem("savePreference");
+
+    if (pref === "never") {
+      document.title = `${this.baseDocumentTitle} - ${this.pendingRomName}`;
+
+      bus.emit(EVENTS.ROM_LOADED, {
+        romBuffer: this.pendingRomBuffer,
+        saveBuffer: null,
+      });
+
+      this.pendingRomBuffer = null;
+      this.pendingRomName = "";
+    } else if (pref === "always") {
+      const saveInput = document.getElementById("modal-sav-upload");
+      if (saveInput) saveInput.click();
+    } else {
+      const checkbox = document.getElementById("modal-dont-ask");
+      if (checkbox) checkbox.checked = false;
+      document.getElementById("save-modal")?.classList.add("active");
+    }
+  }
+
   initDragAndDrop() {
     const dropZone = document.querySelector(".drop-zone-mini");
     if (!dropZone) return;
@@ -186,69 +171,83 @@ export class Inputs {
       dropZone.classList.remove("drag-over"),
     );
 
-    dropZone.addEventListener("drop", async (e) => {
+    dropZone.addEventListener("drop", (e) => {
       dropZone.classList.remove("drag-over");
-      const file = e.dataTransfer.files[0];
-      if (file) bus.emit(EVENTS.ROM_LOADED, await file.arrayBuffer());
+      this.processRomFile(e.dataTransfer.files[0]);
     });
   }
 
-  /**
-   * Standard file picker for ROM loading.
-   * @private
-   */
   initFileInput() {
     const input = document.getElementById("rom-upload");
     if (!input) return;
 
-    // Cache the original titles so we don't infinitely append them
-    const originalDocumentTitle = document.title;
-    const titleElement = document.getElementById("title");
-    const originalElementText = titleElement ? titleElement.innerText : "";
-
-    input.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const romName = file.name;
-      document.title = `${originalDocumentTitle} - ${romName}`;
-      if (titleElement) {
-        titleElement.innerText = `${originalElementText} - ${romName}`;
-      }
-
-      bus.emit(EVENTS.ROM_LOADED, await file.arrayBuffer());
+    input.addEventListener("change", (e) => {
+      this.processRomFile(e.target.files[0]);
+      e.target.value = ""; // Reset input
     });
   }
 
-  /**
-   * Save/Load functionality for state/save files.
-   * @private
-   */
+  initModal() {
+    const modal = document.getElementById("save-modal");
+    const btnYes = document.getElementById("modal-btn-yes");
+    const btnNo = document.getElementById("modal-btn-no");
+    const saveInput = document.getElementById("modal-sav-upload");
+    const dontAskCheckbox = document.getElementById("modal-dont-ask");
+
+    if (!modal) return;
+
+    // Added a userChoice parameter to track "always" or "never"
+    const finalizeRomLoad = (saveBuffer = null, userChoice = null) => {
+      if (dontAskCheckbox && dontAskCheckbox.checked && userChoice) {
+        localStorage.setItem("savePreference", userChoice);
+      }
+
+      modal.classList.remove("active");
+      document.title = `${this.baseDocumentTitle} - ${this.pendingRomName}`;
+
+      bus.emit(EVENTS.ROM_LOADED, {
+        romBuffer: this.pendingRomBuffer,
+        saveBuffer: saveBuffer,
+      });
+
+      this.pendingRomBuffer = null;
+      this.pendingRomName = "";
+    };
+
+    // If they click NO, save the preference as "never"
+    btnNo.addEventListener("click", () => finalizeRomLoad(null, "never"));
+
+    btnYes.addEventListener("click", () => saveInput.click());
+
+    saveInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const saveBuffer = await file.arrayBuffer();
+      // If they click YES and select a file, save the preference as "always"
+      finalizeRomLoad(saveBuffer, "always");
+      e.target.value = "";
+    });
+  }
+
   initSaveInput() {
     const btnExport = document.getElementById("btn-export-sav");
     if (btnExport) {
-      btnExport.addEventListener("click", () => {
-        bus.emit(EVENTS.EXPORT_SAVE);
-      });
+      btnExport.addEventListener("click", () => bus.emit(EVENTS.EXPORT_SAVE));
     }
 
     const btnLoad = document.getElementById("btn-load-save");
     const inputLoad = document.getElementById("sav-upload");
     if (btnLoad && inputLoad) {
-      btnLoad.addEventListener("click", () => {
-        inputLoad.click();
-      });
+      btnLoad.addEventListener("click", () => inputLoad.click());
       inputLoad.addEventListener("change", async (e) => {
         const file = e.target.files[0];
         if (file) bus.emit(EVENTS.SAVE_LOADED, await file.arrayBuffer());
-        e.target.value = ""; // Reset input to allow reloading the same file
+        e.target.value = "";
       });
     }
   }
 
-  /**
-   * Producer: Updates the Store speed when the slider moves.
-   * @private
-   */
   initSpeedInput() {
     const input = document.getElementById("speed-input");
     if (!input) return;
@@ -260,10 +259,6 @@ export class Inputs {
     });
   }
 
-  /**
-   * Producer: Updates the Store volume when the slider moves.
-   * @private
-   */
   initVolumeInput() {
     const input = document.getElementById("volume-input");
     if (!input) return;
