@@ -7,6 +7,7 @@ import { AudioPlayer } from "./js/AudioPlayer.js";
 import { bus } from "./js/EventBus.js";
 import { EVENTS } from "./js/Events.js";
 import { MobileMenu } from "./js/MobileMenu.js";
+import { Scaler } from "./js/Scaler.js";
 
 /**
  * Main entry point to initialize the WASM core and JS peripherals.
@@ -26,6 +27,7 @@ async function boot() {
     new EmulatorContext(wasm, WasmEmulator);
 
     new MobileMenu();
+    new Scaler();
 
     bus.emit(EVENTS.REQUEST_KEYBINDS_SYNC);
 

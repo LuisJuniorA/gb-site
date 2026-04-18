@@ -304,9 +304,10 @@ body.drag-over #drop-zone {
 
   /* Dynamically scale the Game Boy to fit the phone screen */
   .gameboy-container {
-    /* Scales down proportionally based on a 600px baseline */
-    transform: scale(min(1, calc(100vw / 600)));
+    transform: scale(var(--gb-scale, 1));
     transform-origin: top center;
+    /* Collapse the phantom layout height: gameboy 890px + margin-top 40px = 930px */
+    margin-bottom: calc((var(--gb-scale, 1) - 1) * 930px);
   }
 }
 
