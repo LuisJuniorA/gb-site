@@ -118,7 +118,7 @@
 }
 
 .dpad-button.up.pressed {
-  transform: translateY(2px);
+  transform: translateY(-2px);
 }
 
 .dpad-button.down.pressed {
@@ -126,7 +126,7 @@
 }
 
 .dpad-button.left.pressed {
-  transform: translateX(2px);
+  transform: translateX(-2px);
 }
 
 .dpad-button.right.pressed {
